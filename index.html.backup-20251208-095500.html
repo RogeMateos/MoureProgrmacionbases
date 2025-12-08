@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial de Programación | Práctica Constante</title>
+    <style>
+      :root {
+        /* --- THEME CONFIGURATION --- */
+        --primary: #2563eb; /* Main Brand Color */
+        --primary-dark: #1e40af;
+        --secondary: #475569;
+        --bg-body: #f8fafc;
+        --bg-sidebar: #0f172a; /* Dark Sidebar */
+        --bg-card: #ffffff;
+        --text-main: #334155;
+        --text-light: #94a3b8;
+        --border: #e2e8f0;
+
+        /* Syntax Highlighting */
+        --code-bg: #1e1e1e;
+        --code-text: #d4d4d4;
+        --token-keyword: #569cd6;
+        --token-string: #ce9178;
+        --token-comment: #6a9955;
+        --token-func: #dcdcaa;
+        --token-number: #b5cea8;
+
+        /* Alert Box Colors */
+        --success-bg: #dcfce7;
+        --success-border: #22c55e;
+        --success-text: #166534;
+        --error-bg: #fee2e2;
+        --error-border: #ef4444;
+        --error-text: #991b1b;
+        --info-bg: #dbeafe;
+        --info-border: #3b82f6;
+        --info-text: #1e40af;
+        --warning-bg: #fef9c3;
+        --warning-border: #eab308;
+        --warning-text: #854d0e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: var(--bg-body);
+        color: var(--text-main);
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* --- LAYOUT --- */
+      .app-container {
+        display: flex;
+        width: 100%;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 280px;
+        background: var(--bg-sidebar);
+        color: white;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        overflow-y: auto;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition: transform 0.3s ease;
+      }
+
+      .brand {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .brand h1 {
+        font-size: 1.2rem;
+        margin: 0;
+        font-weight: 700;
+        color: white;
+        letter-spacing: -0.5px;
+      }
+      .brand span {
+        color: var(--primary);
+      }
+      .brand small {
+        display: block;
+        margin-top: 5px;
+        opacity: 0.6;
+        font-size: 0.75rem;
+        font-weight: normal;
+      }
+
+      .nav-links {
+        list-style: none;
+        padding: 1rem 0;
+        margin: 0;
+      }
+      .nav-links li a {
+        display: block;
+        padding: 0.75rem 1.5rem;
+        color: var(--text-light);
+        text-decoration: none;
+        font-size: 0.9rem;
+        border-left: 3px solid transparent;
+        transition: all 0.2s;
+      }
+      .nav-links li a:hover,
+      .nav-links li a.active {
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        border-left-color: var(--primary);
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        padding: 2rem 4rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .mobile-toggle {
+        display: none;
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 101;
+        background: var(--bg-sidebar);
+        color: white;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      /* Progress Bar */
+      .reading-progress-container {
+        position: fixed;
+        top: 0;
+        left: 280px;
+        right: 0;
+        height: 4px;
+        background: transparent;
+        z-index: 99;
+      }
+      .reading-progress-bar {
+        height: 100%;
+        background: var(--primary);
+        width: 0%;
+        transition: width 0.1s;
+      }
+
+      /* Typography */
+      h1 {
+        font-size: 2.5rem;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+      }
+      h2 {
+        font-size: 1.8rem;
+        color: #334155;
+        margin-top: 3rem;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 0.5rem;
+      }
+      h3 {
+        font-size: 1.4rem;
+        color: #475569;
+        margin-top: 2rem;
+      }
+      p,
+      li {
+        line-height: 1.7;
+        color: #4b5563;
+      }
+      a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      /* Code Blocks */
+      pre {
+        background: var(--code-bg);
+        color: var(--code-text);
+        padding: 1.5rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-family: "Menlo", "Monaco", "Courier New", monospace;
+        font-size: 0.9rem;
+        position: relative;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+      .copy-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        border-radius: 4px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      pre:hover .copy-btn {
+        opacity: 1;
+      }
+
+      /* Syntax Colors */
+      .token-keyword {
+        color: var(--token-keyword);
+        font-weight: bold;
+      }
+      .token-string {
+        color: var(--token-string);
+      }
+      .token-comment {
+        color: var(--token-comment);
+        font-style: italic;
+      }
+      .token-function {
+        color: var(--token-func);
+      }
+      .token-number {
+        color: var(--token-number);
+      }
+
+      /* Callouts */
+      .callout {
+        padding: 1rem 1.5rem;
+        border-radius: 6px;
+        border-left: 4px solid;
+        margin: 1.5rem 0;
+        background: white;
+      }
+      .callout.success {
+        background: var(--success-bg);
+        border-color: var(--success-border);
+        color: var(--success-text);
+      }
+      .callout.danger {
+        background: var(--error-bg);
+        border-color: var(--error-border);
+        color: var(--error-text);
+      }
+      .callout.info {
+        background: var(--info-bg);
+        border-color: var(--info-border);
+        color: var(--info-text);
+      }
+      .callout.warning {
+        background: var(--warning-bg);
+        border-color: var(--warning-border);
+        color: var(--warning-text);
+      }
+
+      .callout-title {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+      }
+
+      /* Interactive Elements (Tabs/Toggles) */
+      .tabs {
+        margin: 2rem 0;
+      }
+      .tab-headers {
+        display: flex;
+        border-bottom: 2px solid var(--border);
+      }
+      .tab-btn {
+        padding: 0.75rem 1.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--text-light);
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+      }
+      .tab-btn.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+      .tab-content {
+        display: none;
+        padding: 1.5rem;
+        background: white;
+        border: 1px solid var(--border);
+        border-top: none;
+      }
+      .tab-content.active {
+        display: block;
+        animation: fadeIn 0.3s;
+      }
+
+      .toggle-section details {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+      }
+      .toggle-section summary {
+        padding: 1rem;
+        background: #f1f5f9;
+        cursor: pointer;
+        font-weight: 600;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .toggle-section summary::after {
+        content: "+";
+        font-size: 1.2rem;
+      }
+      .toggle-section details[open] summary::after {
+        content: "-";
+      }
+      .toggle-content {
+        padding: 1rem;
+      }
+
+      /* Helper Grid */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .sidebar {
+          position: fixed;
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .main-content {
+          padding: 1rem;
+          margin-top: 3rem;
+        }
+        .reading-progress-container {
+          left: 0;
+        }
+        .mobile-toggle {
+          display: block;
+        }
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰ Menu</button>
+    <div class="reading-progress-container">
+      <div class="reading-progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="app-container">
+      <!-- SIDEBAR NAVIGATION -->
+      <nav class="sidebar" id="sidebar">
+        <div class="brand">
+          <h1 id="project-title">Tutorial<span>Práctica</span></h1>
+          <small id="project-version">Guía enfocada</small>
+        </div>
+        <ul class="nav-links">
+          <li><a href="#intro" class="active">Introducción</a></li>
+          <li><a href="#beneficios">Beneficios</a></li>
+          <li><a href="#plan">Plan de práctica</a></li>
+          <li><a href="#estudio">Cómo estudiar</a></li>
+          <li><a href="#organizar-estudio">Organizar estudio</a></li>
+          <li><a href="#estrategias">Estrategias de práctica</a></li>
+          <li><a href="#logica">Lógica de programación</a></li>
+          <li><a href="#pensamiento-logico">Pensamiento lógico</a></li>
+          <li><a href="#booleana">Lógica booleana</a></li>
+          <li><a href="#matematicas">Matemáticas</a></li>
+          <li><a href="#errores">Errores (visión rápida)</a></li>
+          <li>
+            <a href="#errores-resolucion">Gestión y resolución de errores</a>
+          </li>
+          <li><a href="#patito">Patito de goma</a></li>
+          <li><a href="#pair">Pair programming</a></li>
+          <li><a href="#ide">IDE y productividad</a></li>
+          <li><a href="#busqueda-ia">Búsqueda e IA</a></li>
+          <li><a href="#git">Git y GitHub</a></li>
+          <li><a href="#portafolio">Portafolio</a></li>
+          <li><a href="#especializacion">Especialización</a></li>
+          <li>
+            <a href="#especializacion-camino">Camino a especialización</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- MAIN CONTENT AREA -->
+      <main class="main-content">
+        <div
+          style="
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+          "
+        >
+          <div class="breadcrumbs">Tutorial / Práctica estructurada</div>
+          <div style="font-size: 0.8rem; color: #64748b" id="last-updated">
+            Actualizado: Hoy
+          </div>
+        </div>
+
+        <section id="intro">
+          <h1>
+            Tutorial para Maximizar el Aprendizaje de Programación Mediante la
+            Práctica Constante y Estructurada
+          </h1>
+          <p>
+            Aprender a programar es, ante todo, una habilidad práctica: se
+            aprende programando, no solo copiando ejercicios ni acumulando
+            certificados. La teoría importa, pero se convierte en conocimiento
+            real cuando se aplica y se practica de forma deliberada. Esta guía
+            sigue la filosofía del <em>Learning by Doing</em> (aprender
+            haciendo), uno de los métodos más efectivos para fijar habilidades.
+          </p>
+          <div class="callout info">
+            <span class="callout-title">Idea central</span>
+            Lleva cada concepto nuevo al código tan pronto como sea posible para
+            que pase de la teoría a tu memoria a largo plazo.
+          </div>
+        </section>
+
+        <section id="beneficios">
+          <h2>Beneficios de la Práctica Continua</h2>
+          <p>
+            La práctica constante es el pilar del progreso. Al repetir y
+            experimentar, el cerebro consolida patrones y la programación se
+            vuelve natural.
+          </p>
+          <ol>
+            <li>
+              <strong>Refuerzo teórico:</strong> consolida conceptos y muestra
+              cómo funcionan en código.
+            </li>
+            <li>
+              <strong>Mejora en la resolución de problemas:</strong> exige
+              pensar de forma lógica y estructurada para superar desafíos.
+            </li>
+            <li>
+              <strong>Construcción de confianza:</strong> cada programa y cada
+              error resuelto aumentan la seguridad al programar.
+            </li>
+            <li>
+              <strong>Retención a largo plazo:</strong> la práctica fija el
+              conocimiento; la teoría aislada se olvida con facilidad.
+            </li>
+          </ol>
+        </section>
+
+        <section id="estrategias">
+          <h2>Estrategias de Práctica Efectiva (Learning by Doing)</h2>
+          <p>
+            Practicar de manera estructurada evita la frustración y acelera el
+            progreso. Estas estrategias te mantienen construyendo y aprendiendo.
+          </p>
+
+          <h3>1. Aplicación inmediata (evitar la frustración)</h3>
+          <ul>
+            <li>Pon en práctica cada concepto nuevo de forma inmediata.</li>
+            <li>
+              Equilibra teoría y práctica: tras 10, 15 o 30 minutos de
+              explicación, dedica horas a codificar.
+            </li>
+            <li>
+              Evita el autoengaño: posponer la práctica lleva al “síndrome de la
+              hoja en blanco”.
+            </li>
+          </ul>
+
+          <h3>2. Desarrolla código propio y experimenta</h3>
+          <ul>
+            <li>
+              Escribe tu propio código: si aprendes bucles, úsalos en ejemplos
+              creados por ti.
+            </li>
+            <li>
+              Experimenta con variaciones y errores comunes para que su uso sea
+              natural en proyectos reales.
+            </li>
+            <li>
+              Plantea ejercicios propios: un programador busca soluciones, no
+              solo completa cursos.
+            </li>
+            <li>
+              Prefiere sesiones cortas y regulares: la constancia gana a las
+              maratones esporádicas.
+            </li>
+          </ul>
+
+          <h3>3. Convierte lecciones en proyectos personales</h3>
+          <ul>
+            <li>
+              Toma ejemplos de clase y conviértelos en mini proyectos
+              personalizados.
+            </li>
+            <li>
+              <strong>Ejemplo:</strong> si aprendes variables y condicionales,
+              crea un programa que guarde la temperatura y muestre si hace frío
+              o calor.
+            </li>
+            <li>
+              Apunta a aplicaciones reales, aunque sean pequeñas, para ejercitar
+              decisiones creativas y enfrentar desafíos.
+            </li>
+          </ul>
+        </section>
+
+        <section id="errores">
+          <h2>Aprender de los Errores y la Depuración</h2>
+          <p>
+            La práctica incluye equivocarse y corregir. Cada error es una señal
+            de dónde mejorar.
+          </p>
+          <ul>
+            <li>
+              <strong>Tolerancia al error:</strong> acepta la frustración
+              inicial; cada fallo es oportunidad de aprendizaje.
+            </li>
+            <li>
+              <strong>Desarrollo de técnicas de depuración:</strong> busca el
+              origen del problema, entiende por qué ocurre y soluciona.
+            </li>
+            <li>
+              <strong>Pensamiento estructurado:</strong> se valora pensar con
+              claridad, no solo escribir código rápido.
+            </li>
+            <li>
+              <strong>Divide para resolver:</strong> descompón el problema, usa
+              pseudocódigo y avanza paso a paso.
+            </li>
+          </ul>
+        </section>
+
+        <section id="plan">
+          <h2>Creación de un Plan de Práctica Semanal</h2>
+          <p>
+            Una rutina clara sostiene el hábito y deja huella en tu memoria.
+          </p>
+          <ol>
+            <li>
+              <strong>Selección de conceptos:</strong> elige dos o tres temas
+              (por ejemplo, bucles y condicionales).
+            </li>
+            <li>
+              <strong>Práctica diaria:</strong> dedica 30 minutos diarios a
+              resolver problemas pequeños con esos conceptos.
+            </li>
+            <li>
+              <strong>Lista de proyectos:</strong> anota mini proyectos donde
+              aplicar lo aprendido.
+            </li>
+            <li>
+              <strong>Reflexión y ajuste semanal:</strong> revisa qué funcionó,
+              qué falta reforzar y ajusta tu plan.
+            </li>
+            <li>
+              <strong>Adaptación personal:</strong> moldea el plan a tus hábitos
+              y mantén la paciencia: la constancia multiplica tus resultados.
+            </li>
+          </ol>
+          <div class="callout success">
+            <span class="callout-title">Recordatorio</span>
+            No temas practicar ni equivocarte. La suma de intentos diarios
+            construye tu nivel como programador.
+          </div>
+        </section>
+
+        <section id="logica">
+          <h2>
+            Tutorial: Fundamentos y Desarrollo de la Lógica de Programación
+          </h2>
+          <p>
+            La lógica de programación es la habilidad para estructurar y
+            resolver problemas de forma clara y secuencial. No se trata solo de
+            escribir líneas de código: es entender el problema, dividirlo en
+            pasos y ordenar la solución para que sea precisa y eficiente.
+          </p>
+
+          <h3>Importancia de la lógica en el desarrollo de código</h3>
+          <p>
+            Una lógica sólida es la base de cualquier software estable y
+            mantenible. Sin ella, el código se vuelve propenso a errores y
+            difícil de evolucionar.
+          </p>
+
+          <h3>Principios fundamentales de la lógica</h3>
+          <ol>
+            <li>
+              <strong>Secuencia:</strong> el orden correcto de instrucciones que
+              guía el flujo del programa.
+            </li>
+            <li>
+              <strong>Condicionales:</strong> decisiones que ramifican el
+              comportamiento según condiciones.
+            </li>
+            <li>
+              <strong>Bucles:</strong> repiten instrucciones hasta cumplir una
+              condición.
+            </li>
+            <li>
+              <strong>Funciones:</strong> bloques reutilizables que encapsulan
+              tareas y simplifican la estructura.
+            </li>
+          </ol>
+
+          <h3>Estrategias para mejorar la lógica de programación</h3>
+          <h4>1. Práctica y planificación</h4>
+          <ul>
+            <li>
+              <strong>Practica constantemente:</strong> comienza con ejercicios
+              sencillos y aumenta la dificultad para consolidar conceptos.
+            </li>
+            <li>
+              <strong>Usa pseudocódigo:</strong> planifica la solución antes de
+              programar; escribe los pasos y valida la lógica fuera del editor.
+            </li>
+            <li>
+              <strong>Descompón problemas:</strong> divide retos grandes en
+              piezas pequeñas y manejables.
+            </li>
+          </ul>
+          ... (backup truncated here for brevity)
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

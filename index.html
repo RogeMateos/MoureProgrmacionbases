@@ -1,0 +1,2416 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial de Programación | Práctica Constante</title>
+    <style>
+      :root {
+        /* --- THEME CONFIGURATION --- */
+        --primary: #2563eb; /* Main Brand Color */
+        --primary-dark: #1e40af;
+        --secondary: #475569;
+        --bg-body: #f8fafc;
+        --bg-sidebar: #0f172a; /* Dark Sidebar */
+        --bg-card: #ffffff;
+        --text-main: #334155;
+        --text-light: #94a3b8;
+        --border: #e2e8f0;
+
+        /* Syntax Highlighting */
+        --code-bg: #1e1e1e;
+        --code-text: #d4d4d4;
+        --token-keyword: #569cd6;
+        --token-string: #ce9178;
+        --token-comment: #6a9955;
+        --token-func: #dcdcaa;
+        --token-number: #b5cea8;
+
+        /* Alert Box Colors */
+        --success-bg: #dcfce7;
+        --success-border: #22c55e;
+        --success-text: #166534;
+        --error-bg: #fee2e2;
+        --error-border: #ef4444;
+        --error-text: #991b1b;
+        --info-bg: #dbeafe;
+        --info-border: #3b82f6;
+        --info-text: #1e40af;
+        --warning-bg: #fef9c3;
+        --warning-border: #eab308;
+        --warning-text: #854d0e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: var(--bg-body);
+        color: var(--text-main);
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* --- LAYOUT --- */
+      .app-container {
+        display: flex;
+        width: 100%;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 280px;
+        background: var(--bg-sidebar);
+        color: white;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        overflow-y: auto;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition: transform 0.3s ease;
+      }
+
+      .brand {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .brand h1 {
+        font-size: 1.2rem;
+        margin: 0;
+        font-weight: 700;
+        color: white;
+        letter-spacing: -0.5px;
+      }
+      .brand span {
+        color: var(--primary);
+      }
+      .brand small {
+        display: block;
+        margin-top: 5px;
+        opacity: 0.6;
+        font-size: 0.75rem;
+        font-weight: normal;
+      }
+
+      .nav-links {
+        list-style: none;
+        padding: 1rem 0;
+        margin: 0;
+      }
+      .nav-links li a {
+        display: block;
+        padding: 0.75rem 1.5rem;
+        color: var(--text-light);
+        text-decoration: none;
+        font-size: 0.9rem;
+        border-left: 3px solid transparent;
+        transition: all 0.2s;
+      }
+      .nav-links li a:hover,
+      .nav-links li a.active {
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        border-left-color: var(--primary);
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        padding: 2rem 4rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .mobile-toggle {
+        display: none;
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 101;
+        background: var(--bg-sidebar);
+        color: white;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      /* Progress Bar */
+      .reading-progress-container {
+        position: fixed;
+        top: 0;
+        left: 280px;
+        right: 0;
+        height: 4px;
+        background: transparent;
+        z-index: 99;
+      }
+      .reading-progress-bar {
+        height: 100%;
+        background: var(--primary);
+        width: 0%;
+        transition: width 0.1s;
+      }
+
+      /* Typography */
+      h1 {
+        font-size: 2.5rem;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+      }
+      h2 {
+        font-size: 1.8rem;
+        color: #334155;
+        margin-top: 3rem;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 0.5rem;
+      }
+      h3 {
+        font-size: 1.4rem;
+        color: #475569;
+        margin-top: 2rem;
+      }
+      p,
+      li {
+        line-height: 1.7;
+        color: #4b5563;
+      }
+      a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      /* Code Blocks */
+      pre {
+        background: var(--code-bg);
+        color: var(--code-text);
+        padding: 1.5rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-family: "Menlo", "Monaco", "Courier New", monospace;
+        font-size: 0.9rem;
+        position: relative;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+      .copy-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        border-radius: 4px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      pre:hover .copy-btn {
+        opacity: 1;
+      }
+
+      /* Syntax Colors */
+      .token-keyword {
+        color: var(--token-keyword);
+        font-weight: bold;
+      }
+      .token-string {
+        color: var(--token-string);
+      }
+      .token-comment {
+        color: var(--token-comment);
+        font-style: italic;
+      }
+      .token-function {
+        color: var(--token-func);
+      }
+      .token-number {
+        color: var(--token-number);
+      }
+
+      /* Callouts */
+      .callout {
+        padding: 1rem 1.5rem;
+        border-radius: 6px;
+        border-left: 4px solid;
+        margin: 1.5rem 0;
+        background: white;
+      }
+      .callout.success {
+        background: var(--success-bg);
+        border-color: var(--success-border);
+        color: var(--success-text);
+      }
+      .callout.danger {
+        background: var(--error-bg);
+        border-color: var(--error-border);
+        color: var(--error-text);
+      }
+      .callout.info {
+        background: var(--info-bg);
+        border-color: var(--info-border);
+        color: var(--info-text);
+      }
+      .callout.warning {
+        background: var(--warning-bg);
+        border-color: var(--warning-border);
+        color: var(--warning-text);
+      }
+
+      .callout-title {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+      }
+
+      /* Interactive Elements (Tabs/Toggles) */
+      .tabs {
+        margin: 2rem 0;
+      }
+      .tab-headers {
+        display: flex;
+        border-bottom: 2px solid var(--border);
+      }
+      .tab-btn {
+        padding: 0.75rem 1.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--text-light);
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+      }
+      .tab-btn.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+      .tab-content {
+        display: none;
+        padding: 1.5rem;
+        background: white;
+        border: 1px solid var(--border);
+        border-top: none;
+      }
+      .tab-content.active {
+        display: block;
+        animation: fadeIn 0.3s;
+      }
+
+      .toggle-section details {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+      }
+      .toggle-section summary {
+        padding: 1rem;
+        background: #f1f5f9;
+        cursor: pointer;
+        font-weight: 600;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .toggle-section summary::after {
+        content: "+";
+        font-size: 1.2rem;
+      }
+      .toggle-section details[open] summary::after {
+        content: "-";
+      }
+      .toggle-content {
+        padding: 1rem;
+      }
+
+      /* Helper Grid */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .sidebar {
+          position: fixed;
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .main-content {
+          padding: 1rem;
+          margin-top: 3rem;
+        }
+        .reading-progress-container {
+          left: 0;
+        }
+        .mobile-toggle {
+          display: block;
+        }
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰ Menu</button>
+    <div class="reading-progress-container">
+      <div class="reading-progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="app-container">
+      <!-- SIDEBAR NAVIGATION -->
+      <nav class="sidebar" id="sidebar">
+        <div class="brand">
+          <h1 id="project-title">Tutorial<span>Práctica</span></h1>
+          <small id="project-version">Guía enfocada</small>
+        </div>
+        <ul class="nav-links">
+          <li><a href="#intro" class="active">Introducción</a></li>
+          <li><a href="#beneficios">Beneficios</a></li>
+          <li><a href="#plan">Plan de práctica</a></li>
+          <li><a href="#estudio">Cómo estudiar</a></li>
+          <li><a href="#organizar-estudio">Organizar estudio</a></li>
+          <li><a href="#estrategias">Estrategias de práctica</a></li>
+          <li><a href="#logica">Lógica de programación</a></li>
+          <li><a href="#pensamiento-logico">Pensamiento lógico</a></li>
+          <li><a href="#booleana">Lógica booleana</a></li>
+          <li><a href="#matematicas">Matemáticas</a></li>
+          <li><a href="#errores">Errores (visión rápida)</a></li>
+          <li>
+            <a href="#errores-resolucion">Gestión y resolución de errores</a>
+          </li>
+          <li><a href="#patito">Patito de goma</a></li>
+          <li><a href="#pair">Pair programming</a></li>
+          <li><a href="#ide">IDE y productividad</a></li>
+          <li><a href="#busqueda-ia">Búsqueda e IA</a></li>
+          <li><a href="#git">Git y GitHub</a></li>
+          <li><a href="#portafolio">Portafolio</a></li>
+          <li><a href="#especializacion">Especialización</a></li>
+          <li>
+            <a href="#especializacion-camino">Camino a especialización</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- MAIN CONTENT AREA -->
+      <main class="main-content">
+        <div
+          style="
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+          "
+        >
+          <div class="breadcrumbs">Tutorial / Práctica estructurada</div>
+          <div style="font-size: 0.8rem; color: #64748b" id="last-updated">
+            Actualizado: Hoy
+          </div>
+        </div>
+
+        <section id="intro">
+          <h1>
+            Tutorial para Maximizar el Aprendizaje de Programación Mediante la
+            Práctica Constante y Estructurada
+          </h1>
+          <p>
+            Aprender a programar es, ante todo, una habilidad práctica: se
+            aprende programando, no solo copiando ejercicios ni acumulando
+            certificados. La teoría importa, pero se convierte en conocimiento
+            real cuando se aplica y se practica de forma deliberada. Esta guía
+            sigue la filosofía del <em>Learning by Doing</em> (aprender
+            haciendo), uno de los métodos más efectivos para fijar habilidades.
+          </p>
+          <div class="callout info">
+            <span class="callout-title">Idea central</span>
+            Lleva cada concepto nuevo al código tan pronto como sea posible para
+            que pase de la teoría a tu memoria a largo plazo.
+          </div>
+        </section>
+
+        <section id="beneficios">
+          <h2>Beneficios de la Práctica Continua</h2>
+          <p>
+            La práctica constante es el pilar del progreso. Al repetir y
+            experimentar, el cerebro consolida patrones y la programación se
+            vuelve natural.
+          </p>
+          <ol>
+            <li>
+              <strong>Refuerzo teórico:</strong> consolida conceptos y muestra
+              cómo funcionan en código.
+            </li>
+            <li>
+              <strong>Mejora en la resolución de problemas:</strong> exige
+              pensar de forma lógica y estructurada para superar desafíos.
+            </li>
+            <li>
+              <strong>Construcción de confianza:</strong> cada programa y cada
+              error resuelto aumentan la seguridad al programar.
+            </li>
+            <li>
+              <strong>Retención a largo plazo:</strong> la práctica fija el
+              conocimiento; la teoría aislada se olvida con facilidad.
+            </li>
+          </ol>
+        </section>
+
+        <section id="estrategias">
+          <h2>Estrategias de Práctica Efectiva (Learning by Doing)</h2>
+          <p>
+            Practicar de manera estructurada evita la frustración y acelera el
+            progreso. Estas estrategias te mantienen construyendo y aprendiendo.
+          </p>
+
+          <h3>1. Aplicación inmediata (evitar la frustración)</h3>
+          <ul>
+            <li>Pon en práctica cada concepto nuevo de forma inmediata.</li>
+            <li>
+              Equilibra teoría y práctica: tras 10, 15 o 30 minutos de
+              explicación, dedica horas a codificar.
+            </li>
+            <li>
+              Evita el autoengaño: posponer la práctica lleva al “síndrome de la
+              hoja en blanco”.
+            </li>
+          </ul>
+
+          <h3>2. Desarrolla código propio y experimenta</h3>
+          <ul>
+            <li>
+              Escribe tu propio código: si aprendes bucles, úsalos en ejemplos
+              creados por ti.
+            </li>
+            <li>
+              Experimenta con variaciones y errores comunes para que su uso sea
+              natural en proyectos reales.
+            </li>
+            <li>
+              Plantea ejercicios propios: un programador busca soluciones, no
+              solo completa cursos.
+            </li>
+            <li>
+              Prefiere sesiones cortas y regulares: la constancia gana a las
+              maratones esporádicas.
+            </li>
+          </ul>
+
+          <h3>3. Convierte lecciones en proyectos personales</h3>
+          <ul>
+            <li>
+              Toma ejemplos de clase y conviértelos en mini proyectos
+              personalizados.
+            </li>
+            <li>
+              <strong>Ejemplo:</strong> si aprendes variables y condicionales,
+              crea un programa que guarde la temperatura y muestre si hace frío
+              o calor.
+            </li>
+            <li>
+              Apunta a aplicaciones reales, aunque sean pequeñas, para ejercitar
+              decisiones creativas y enfrentar desafíos.
+            </li>
+          </ul>
+        </section>
+
+        <section id="errores">
+          <h2>Aprender de los Errores y la Depuración</h2>
+          <p>
+            La práctica incluye equivocarse y corregir. Cada error es una señal
+            de dónde mejorar.
+          </p>
+          <ul>
+            <li>
+              <strong>Tolerancia al error:</strong> acepta la frustración
+              inicial; cada fallo es oportunidad de aprendizaje.
+            </li>
+            <li>
+              <strong>Desarrollo de técnicas de depuración:</strong> busca el
+              origen del problema, entiende por qué ocurre y soluciona.
+            </li>
+            <li>
+              <strong>Pensamiento estructurado:</strong> se valora pensar con
+              claridad, no solo escribir código rápido.
+            </li>
+            <li>
+              <strong>Divide para resolver:</strong> descompón el problema, usa
+              pseudocódigo y avanza paso a paso.
+            </li>
+          </ul>
+        </section>
+
+        <section id="plan">
+          <h2>Creación de un Plan de Práctica Semanal</h2>
+          <p>
+            Una rutina clara sostiene el hábito y deja huella en tu memoria.
+          </p>
+          <ol>
+            <li>
+              <strong>Selección de conceptos:</strong> elige dos o tres temas
+              (por ejemplo, bucles y condicionales).
+            </li>
+            <li>
+              <strong>Práctica diaria:</strong> dedica 30 minutos diarios a
+              resolver problemas pequeños con esos conceptos.
+            </li>
+            <li>
+              <strong>Lista de proyectos:</strong> anota mini proyectos donde
+              aplicar lo aprendido.
+            </li>
+            <li>
+              <strong>Reflexión y ajuste semanal:</strong> revisa qué funcionó,
+              qué falta reforzar y ajusta tu plan.
+            </li>
+            <li>
+              <strong>Adaptación personal:</strong> moldea el plan a tus hábitos
+              y mantén la paciencia: la constancia multiplica tus resultados.
+            </li>
+          </ol>
+          <div class="callout success">
+            <span class="callout-title">Recordatorio</span>
+            No temas practicar ni equivocarte. La suma de intentos diarios
+            construye tu nivel como programador.
+          </div>
+        </section>
+
+        <section id="logica">
+          <h2>
+            Tutorial: Fundamentos y Desarrollo de la Lógica de Programación
+          </h2>
+          <p>
+            La lógica de programación es la habilidad para estructurar y
+            resolver problemas de forma clara y secuencial. No se trata solo de
+            escribir líneas de código: es entender el problema, dividirlo en
+            pasos y ordenar la solución para que sea precisa y eficiente.
+          </p>
+
+          <h3>Importancia de la lógica en el desarrollo de código</h3>
+          <p>
+            Una lógica sólida es la base de cualquier software estable y
+            mantenible. Sin ella, el código se vuelve propenso a errores y
+            difícil de evolucionar.
+          </p>
+          <ul>
+            <li>
+              <strong>Flexibilidad profesional:</strong> con fundamentos sólidos
+              puedes moverte entre lenguajes, proyectos o frameworks porque la
+              lógica subyacente permanece.
+            </li>
+            <li>
+              <strong>Optimización de soluciones:</strong> escribir con buena
+              lógica reduce redundancias y mejora el rendimiento, clave en
+              proyectos grandes o de alta demanda.
+            </li>
+            <li>
+              <strong>Mantenimiento y claridad:</strong> un código guiado por
+              lógica se lee mejor, se depura más rápido y funciona como
+              documentación viva de cómo está resuelto el problema.
+            </li>
+          </ul>
+
+          <h3>Principios fundamentales de la lógica</h3>
+          <ol>
+            <li>
+              <strong>Secuencia:</strong> el orden correcto de instrucciones que
+              guía el flujo del programa.
+            </li>
+            <li>
+              <strong>Condicionales:</strong> decisiones que ramifican el
+              comportamiento según condiciones.
+            </li>
+            <li>
+              <strong>Bucles:</strong> repiten instrucciones hasta cumplir una
+              condición.
+            </li>
+            <li>
+              <strong>Funciones:</strong> bloques reutilizables que encapsulan
+              tareas y simplifican la estructura.
+            </li>
+          </ol>
+
+          <h3>Estrategias para mejorar la lógica de programación</h3>
+          <h4>1. Práctica y planificación</h4>
+          <ul>
+            <li>
+              <strong>Practica constantemente:</strong> comienza con ejercicios
+              sencillos y aumenta la dificultad para consolidar conceptos.
+            </li>
+            <li>
+              <strong>Usa pseudocódigo:</strong> planifica la solución antes de
+              programar; escribe los pasos y valida la lógica fuera del editor.
+            </li>
+            <li>
+              <strong>Descompón problemas:</strong> divide retos grandes en
+              piezas pequeñas y manejables.
+            </li>
+          </ul>
+          <h4>2. Técnicas de estructuración</h4>
+          <ul>
+            <li>
+              <strong>Divide y vencerás:</strong> aplica este principio para
+              abordar soluciones complejas paso a paso.
+            </li>
+            <li>
+              <strong>Identificación de patrones:</strong> detecta repeticiones
+              y resuélvelas con enfoques generales que puedas reutilizar.
+            </li>
+          </ul>
+          <h3>Ejemplo breve en pseudocódigo</h3>
+          <pre><code># Objetivo: indicar si la temperatura es fría, templada o caliente
+pedir temperatura
+si temperatura < 10 entonces
+    mostrar "Hace frío"
+sino si temperatura <= 25 entonces
+    mostrar "Templado"
+sino
+    mostrar "Hace calor"
+fin si</code></pre>
+          <h3>Ejercicios rápidos para practicar</h3>
+          <ul>
+            <li>
+              <strong>Contador con condición:</strong> escribe pseudocódigo que
+              imprima los números del 1 al 20 y marque con "par" los múltiplos
+              de 2.
+            </li>
+            <li>
+              <strong>Filtro de acceso:</strong> dado un rol (admin, editor,
+              lector) decide con condicionales qué mensaje mostrar: acceso
+              total, acceso parcial o solo lectura.
+            </li>
+            <li>
+              <strong>Suma acumulada:</strong> solicita números hasta que el
+              usuario escriba 0 y muestra la suma final. Usa un bucle y una
+              variable acumuladora.
+            </li>
+          </ul>
+          <div class="callout info">
+            <span class="callout-title">Práctica deliberada</span>
+            Al igual que con la sintaxis, la lógica se vuelve natural con
+            práctica continua resolviendo problemas y escribiendo pseudocódigo
+            antes del código real.
+          </div>
+        </section>
+
+        <section id="portafolio">
+          <h2>
+            Tutorial: Guía para la Creación de un Portafolio de Programación
+          </h2>
+          <p>
+            Un portafolio personal reúne tus mejores proyectos y demuestra tus
+            habilidades de forma tangible. Es una ventana a tu trabajo que
+            transmite profesionalismo y organización. (Las respuestas guardadas
+            son de solo lectura.)
+          </p>
+
+          <h3>I. Planificación y selección de proyectos</h3>
+          <p>
+            El objetivo principal es destacar con proyectos que muestren tu
+            valor.
+          </p>
+          <ol>
+            <li>
+              <strong>Define el enfoque:</strong> alinéalo con tu especialidad
+              (web, móvil, datos, etc.).
+            </li>
+            <li>
+              <strong>Prioriza calidad sobre cantidad:</strong> 2 a 5 proyectos
+              sólidos son suficientes.
+            </li>
+            <li>
+              <strong>Busca originalidad:</strong> proyectos con historia
+              propia, evita ejercicios clonados.
+            </li>
+            <li>
+              <strong>Demuestra desarrollo independiente:</strong> deja claro
+              que construiste el proyecto por tu cuenta.
+            </li>
+            <li>
+              <strong>Muestra progreso (opcional):</strong> ordena proyectos
+              para evidenciar evolución; en colaborativos, detalla tu aporte.
+            </li>
+          </ol>
+
+          <h3>II. Componentes clave del contenido</h3>
+          <p>Incluye elementos técnicos, educativos y personales.</p>
+          <ul>
+            <li>
+              <strong>Detalles del proyecto:</strong> código, descripción,
+              tecnologías y herramientas, demo en vivo (o explicación clara si
+              no hay demo) y enlace al código público (idealmente GitHub).
+            </li>
+            <li>
+              <strong>Trayectoria profesional y estudios:</strong> breve resumen
+              que contextualice tu experiencia.
+            </li>
+            <li>
+              <strong>Descripción personal:</strong> quién eres, motivaciones e
+              intereses para dar cercanía y mostrar tus metas.
+            </li>
+          </ul>
+
+          <h3>III. Organización y diseño del portafolio</h3>
+          <p>
+            La forma de mostrar tu trabajo importa tanto como el trabajo en sí.
+          </p>
+          <ul>
+            <li>
+              <strong>Plataforma:</strong> una web propia es ideal; complétala
+              con tu perfil de GitHub.
+            </li>
+            <li>
+              <strong>Diseño y navegación:</strong> claro, limpio y sencillo;
+              evita sobrecargar y deja claro a qué te dedicas.
+            </li>
+            <li>
+              <strong>Contacto visible:</strong> muestra el email en texto y no
+              dependas solo de botones.
+            </li>
+          </ul>
+
+          <h3>IV. Mantenimiento</h3>
+          <p>
+            Un buen portafolio se construye con tiempo y se actualiza a medida
+            que crecen tus competencias.
+          </p>
+          <ul>
+            <li>Planifica tiempo para revisarlo y mejorarlo regularmente.</li>
+            <li>
+              Si recién comienzas, añade avances a medida que aprendes para
+              reflejar progreso.
+            </li>
+          </ul>
+
+          <div class="callout info">
+            <span class="callout-title">Metáfora</span>
+            Piensa en tu portafolio como el escaparate de una tienda de alta
+            costura: exhibe pocas piezas magistrales que reflejen tu técnica,
+            originalidad y capacidad para diseñar un conjunto completo de
+            principio a fin.
+          </div>
+        </section>
+
+        <section id="patito">
+          <h2>
+            Tutorial: Cómo Aplicar la Técnica del Patito de Goma (Rubber Duck
+            Debugging)
+          </h2>
+          <p>
+            La técnica del patito de goma se basa en explicar tu problema de
+            código a un objeto inanimado. Al verbalizar cada paso, el cerebro
+            organiza la información y a menudo la solución aparece con claridad.
+          </p>
+
+          <h3>I. Introducción y concepto</h3>
+          <p>
+            Coloca un patito (o cualquier objeto) frente a ti y explícale el
+            código línea por línea. La autoexplicación obliga a estructurar tus
+            ideas y hace evidentes inconsistencias.
+          </p>
+
+          <h3>II. Beneficios clave</h3>
+          <ul>
+            <li>
+              <strong>Detección de errores:</strong> al narrar el flujo, saltan
+              a la vista fallos o condiciones olvidadas.
+            </li>
+            <li>
+              <strong>Mejora de habilidades:</strong> practicas lógica y
+              claridad al justificar cada paso.
+            </li>
+            <li>
+              <strong>Comunicación:</strong> entrenas la explicación simple,
+              vital para colaborar en equipo.
+            </li>
+          </ul>
+
+          <h3>III. Pasos para aplicar la técnica</h3>
+          <ol>
+            <li>
+              <strong>Prepara la audiencia:</strong> coloca el patito u objeto
+              frente a ti.
+            </li>
+            <li>
+              <strong>Explica en voz alta:</strong> describe cada línea y su
+              propósito como si enseñaras.
+            </li>
+            <li>
+              <strong>Justifica cada acción:</strong> cuestiona “¿por qué hago
+              esto aquí?” para destapar errores.
+            </li>
+            <li>
+              <strong>Haz pausas de reflexión:</strong> detente cuando algo no
+              encaje y analiza.
+            </li>
+            <li>
+              <strong>Identifica el problema:</strong> la claridad al explicar
+              suele revelar la causa sin ayuda externa.
+            </li>
+          </ol>
+
+          <h3>Ejemplo breve de explicación en voz alta</h3>
+          <pre><code class="language-javascript">function calcularPromedio(numeros) {
+  let suma = 0;
+  for (let i = 0; i <= numeros.length; i++) {
+    suma += numeros[i]; // ¿qué pasa en la última iteración?
+  }
+  return suma / numeros.length;
+}</code></pre>
+          <ul>
+            <li>
+              Mientras lo explicas al patito: “sumo cada elemento... recorro con
+              i desde 0 hasta <= length”.
+            </li>
+            <li>
+              Al decirlo, notas que <code>i <= numeros.length</code> accede a un
+              índice fuera de rango (undefined) en la última vuelta.
+            </li>
+            <li>
+              La autoexplicación revela la corrección: usar
+              <code>i &lt; numeros.length</code> o recorrer con
+              <code>for (const n of numeros)</code>.
+            </li>
+          </ul>
+
+          <h3>IV. Consejos adicionales</h3>
+          <ul>
+            <li>
+              <strong>Mantén la sencillez:</strong> explica como si la audiencia
+              no supiera programar.
+            </li>
+            <li>
+              <strong>Apóyate en visuales:</strong> dibuja diagramas o flujos si
+              el problema es complejo.
+            </li>
+          </ul>
+
+          <div class="callout info">
+            <span class="callout-title">Metáfora</span>
+            Imagina tu mente como un archivero desordenado: al explicar cada
+            “documento” al patito, ordenas las carpetas y ves enseguida qué
+            falta o qué está fuera de lugar.
+          </div>
+        </section>
+
+        <section id="pair">
+          <h2>
+            Tutorial para Implementar la Programación por Pares (Pair
+            Programming)
+          </h2>
+          <p>
+            Aplicar la programación por pares en tu flujo de trabajo potencia el
+            aprendizaje mutuo y mejora la calidad del código. Dos personas
+            colaboran sobre la misma tarea alternando roles para escribir,
+            revisar y decidir.
+          </p>
+
+          <h3>1. Definición y fundamentos</h3>
+          <p>
+            Dos programadores trabajan juntos en un solo equipo: uno escribe y
+            otro revisa en tiempo real. Puedes practicarlo en el ámbito laboral
+            o encontrando compañeros en comunidades (foros, Discord, etc.).
+          </p>
+
+          <h3>2. Los roles esenciales</h3>
+          <ul>
+            <li>
+              <strong>Conductor (Driver):</strong> escribe el código, cuida la
+              sintaxis y la implementación siguiendo la lógica acordada.
+            </li>
+            <li>
+              <strong>Observador (Observer/Navigator):</strong> revisa el
+              código, sugiere mejoras y mantiene la visión global para alinear
+              con los objetivos. Supervisa sin impedir el flujo.
+            </li>
+          </ul>
+          <div class="callout info">
+            <span class="callout-title">Equilibrio</span>
+            Ambos roles son igual de importantes. No necesitas ser experto para
+            observar: dos cabezas piensan mejor que una y ambos aprenden del
+            enfoque del otro.
+          </div>
+
+          <h3>3. Beneficios de la programación por pares</h3>
+          <ol>
+            <li>
+              <strong>Aprendizaje mutuo:</strong> compartes perspectivas y
+              aceleras tu curva de aprendizaje.
+            </li>
+            <li>
+              <strong>Detección rápida de errores:</strong> el observador
+              identifica fallos de lógica o sintaxis que el conductor puede
+              pasar por alto.
+            </li>
+            <li>
+              <strong>Mejor comprensión del código:</strong> explicar y escuchar
+              explicaciones refuerza la lógica detrás de cada línea.
+            </li>
+            <li>
+              <strong>Soft skills:</strong> exige comunicación clara, recibir
+              feedback y colaborar con empatía.
+            </li>
+            <li>
+              <strong>Confianza y motivación:</strong> resolver en pareja
+              problemas complejos reduce la frustración y mantiene el ánimo.
+            </li>
+          </ol>
+
+          <h3>4. Consejos para sacar el máximo provecho</h3>
+          <ul>
+            <li>
+              <strong>Alterna roles:</strong> cambia cada 15–30 minutos para
+              practicar escritura y supervisión.
+            </li>
+            <li>
+              <strong>Comunica en voz alta:</strong> explica tu idea y escucha
+              sugerencias; alinear expectativas evita retrabajo.
+            </li>
+            <li>
+              <strong>Recibe retroalimentación:</strong> mantén apertura a
+              críticas constructivas y mejoras.
+            </li>
+            <li>
+              <strong>Planifica antes de escribir:</strong> acuerden estrategia
+              general para reducir malentendidos.
+            </li>
+            <li>
+              <strong>Observa sin bloquear:</strong> sugiere sin interrumpir el
+              flujo del conductor; deja que complete la idea.
+            </li>
+          </ul>
+
+          <h4>Checklist rápido de sesión</h4>
+          <ul>
+            <li>Define objetivo concreto (ticket, kata, bug).</li>
+            <li>
+              Acuerda duración y cadencia de turnos (ej. 25 min driver, 25 min
+              observer).
+            </li>
+            <li>Reparte roles iniciales y confirma alternancia.</li>
+            <li>
+              Establece comunicación: “pienso en voz alta, tú señalas riesgos”.
+            </li>
+            <li>Reserva 5 min finales para revisar y anotar pendientes.</li>
+          </ul>
+
+          <h4>Mini guion de comunicación</h4>
+          <ul>
+            <li>
+              <strong>Inicio:</strong> “Objetivo de hoy es ___; yo conduzco
+              primero, tú observas”.
+            </li>
+            <li>
+              <strong>Durante:</strong> “Voy a intentar ___ por esta razón… ¿ves
+              algún riesgo?”
+            </li>
+            <li>
+              <strong>Feedback:</strong> “Propongo ajustar ___ para evitar ___;
+              ¿te parece?”
+            </li>
+            <li>
+              <strong>Cambio de rol:</strong> “Pasaron 25 min; cambiemos: ahora
+              tú conduces y yo observo”.
+            </li>
+            <li>
+              <strong>Cierre:</strong> “Logramos ___; pendientes: ___; siguiente
+              paso: ___”.
+            </li>
+          </ul>
+
+          <h3>5. Errores comunes a evitar</h3>
+          <ol>
+            <li>
+              <strong>Falta de comunicación:</strong> trabajar en silencio
+              genera confusión y pérdida de foco.
+            </li>
+            <li>
+              <strong>No alternar roles:</strong> desequilibra el aprendizaje y
+              limita la perspectiva.
+            </li>
+            <li>
+              <strong>Interrupciones constantes:</strong> corta el hilo del
+              conductor y genera frustración.
+            </li>
+            <li>
+              <strong>Micromanagement:</strong> imponer cada decisión bloquea la
+              colaboración; el objetivo es apoyar y aprender.
+            </li>
+          </ol>
+          <div class="callout warning">
+            <span class="callout-title">Recordatorio</span>
+            La finalidad del pair programming es fomentar aprendizaje mutuo y
+            mentalidad colectiva. Evita imponer, comunica con claridad y mantén
+            el ambiente sano.
+          </div>
+        </section>
+
+        <section id="estudio">
+          <h2>Tutorial: Cómo Estudiar Programación de Manera Efectiva</h2>
+          <p>
+            Aprender a programar exige paciencia y constancia. Una buena
+            metodología evita la frustración y hace el proceso más disfrutable.
+            Estas seis técnicas te ayudarán a organizar el estudio, retener
+            mejor y avanzar con solidez.
+          </p>
+
+          <h3>Mecánicas para el estudio efectivo</h3>
+          <h4>1. Prioriza lecciones cortas, pausar y repetir</h4>
+          <ul>
+            <li>
+              <strong>Divide los temas:</strong> fragmenta en partes pequeñas
+              para enfocarte y comprender.
+            </li>
+            <li>
+              <strong>Toma descansos:</strong> usa pausas para asimilar lo
+              estudiado.
+            </li>
+            <li>
+              <strong>Pausa y revisa:</strong> si algo no está claro, repite la
+              lección; evita acumular dudas.
+            </li>
+          </ul>
+
+          <h4>2. Descansa para favorecer la retención</h4>
+          <ul>
+            <li>
+              <strong>Descansos cortos y frecuentes:</strong> permiten que el
+              cerebro consolide información.
+            </li>
+            <li>
+              <strong>Método Pomodoro:</strong> 25 minutos de trabajo, 5 de
+              descanso; pausa larga tras cuatro bloques.
+            </li>
+          </ul>
+
+          <h4>3. Aplica “divide y vencerás”</h4>
+          <ul>
+            <li>
+              <strong>Crea subproblemas:</strong> resuelve partes pequeñas y
+              luego intégralas.
+            </li>
+            <li>
+              <strong>Avance progresivo:</strong> con práctica, automatizas lo
+              simple y aplicas la técnica a retos mayores.
+            </li>
+            <li>
+              <strong>Ejemplo:</strong> para obtener los tres números más altos:
+              primero ordena la lista, luego toma los tres últimos.
+            </li>
+          </ul>
+
+          <h4>4. Usa pseudocódigo para simplificar y planificar</h4>
+          <ul>
+            <li>
+              <strong>Organiza sin sintaxis:</strong> escribe pasos en lenguaje
+              natural.
+            </li>
+            <li>
+              <strong>Concéntrate en la lógica:</strong> evita errores comunes
+              al codificar.
+            </li>
+          </ul>
+          <pre><code># Calcular la media de una lista de números
+inicializar suma = 0
+contar cantidad de numeros
+para cada numero en la lista
+    suma = suma + numero
+fin para
+media = suma / cantidad
+mostrar media</code></pre>
+
+          <h4>5. Escribe a mano para mejorar comprensión y memoria</h4>
+          <ul>
+            <li>
+              <strong>Procesamiento profundo:</strong> al escribir a mano
+              analizas con más calma.
+            </li>
+            <li>
+              <strong>Memoria a largo plazo:</strong> favorece recordar
+              conceptos días después.
+            </li>
+            <li>
+              <strong>Aplicación práctica:</strong> redacta a mano pasos de
+              algoritmos o fragmentos combinados con pseudocódigo.
+            </li>
+          </ul>
+
+          <h4>6. Planifica y genera hábito</h4>
+          <ul>
+            <li>
+              <strong>Constancia primero:</strong> mejor poco cada día que mucho
+              de vez en cuando.
+            </li>
+            <li>
+              <strong>Metas pequeñas:</strong> enfoca cada sesión en un objetivo
+              acotado.
+            </li>
+            <li>
+              <strong>Plan personalizado:</strong> define tu tiempo diario (ej.
+              con Pomodoro) y divide temas en unidades pequeñas.
+            </li>
+          </ul>
+
+          <h4>Checklist diario (imprimible)</h4>
+          <ul>
+            <li>[ ] Sesión 1: ___ min de teoría (tema concreto).</li>
+            <li>[ ] Sesión 2: ___ min de práctica directa del tema.</li>
+            <li>[ ] Pausas: ___ bloques Pomodoro con descanso.</li>
+            <li>[ ] Pseudocódigo escrito a mano de lo practicado.</li>
+            <li>[ ] Mini resumen: 3 ideas clave y 1 duda pendiente.</li>
+          </ul>
+
+          <h4>Checklist semanal (imprimible)</h4>
+          <ul>
+            <li>[ ] Temas cubiertos: ____________________.</li>
+            <li>[ ] Progreso en proyecto/ejercicio aplicado.</li>
+            <li>[ ] Dudas resueltas / nuevas por investigar.</li>
+            <li>[ ] Tiempo total de práctica efectiva (hh:mm).</li>
+            <li>[ ] Ajustes para la próxima semana.</li>
+          </ul>
+
+          <div class="callout success">
+            <span class="callout-title">Aplicación práctica</span>
+            Diseña tu plan de estudio con descansos, pseudocódigo y escritura a
+            mano. No te frustres si algo tarda en encajar: la práctica constante
+            es la clave.
+          </div>
+        </section>
+
+        <section id="organizar-estudio">
+          <h2>
+            Tutorial: Cómo Organizar tu Estudio de Programación de Forma
+            Efectiva
+          </h2>
+          <p>
+            Basado en las seis técnicas de estudio, esta guía paso a paso te
+            ayuda a evitar la sobrecarga, mejorar la retención y avanzar con
+            constancia.
+          </p>
+
+          <h3>Fase 1: Planificación y gestión del tiempo</h3>
+          <h4>Paso 1: Crear un horario regular y constante</h4>
+          <ul>
+            <li>
+              <strong>Sé regular:</strong> mejor poco cada día que un maratón
+              aislado.
+            </li>
+            <li>
+              <strong>Adapta el tiempo:</strong> por ejemplo, 1 hora de lunes a
+              viernes y repaso el fin de semana.
+            </li>
+            <li>
+              <strong>Objetivos pequeños:</strong> hoy bucles, mañana
+              aplicarlos.
+            </li>
+          </ul>
+          <h4>Paso 2: Sesiones cortas y pausas frecuentes</h4>
+          <ul>
+            <li>
+              <strong>Divide en sesiones cortas:</strong> facilita concentración
+              y comprensión.
+            </li>
+            <li>
+              <strong>Descansos breves:</strong> ayudan a consolidar lo
+              aprendido.
+            </li>
+            <li>
+              <strong>Método Pomodoro:</strong> 25 minutos de foco + 5 de pausa;
+              descanso largo tras cuatro bloques.
+            </li>
+          </ul>
+
+          <h3>Fase 2: Metodologías de comprensión profunda</h3>
+          <h4>Paso 3: Pausar y repetir</h4>
+          <ul>
+            <li>
+              <strong>No te apresures:</strong> si algo no queda claro, vuelve y
+              repite.
+            </li>
+            <li>
+              <strong>Evita acumular dudas:</strong> lo avanzado depende de lo
+              básico.
+            </li>
+          </ul>
+          <h4>Paso 4: Aplica “divide y vencerás”</h4>
+          <ul>
+            <li><strong>Descompón:</strong> crea subproblemas pequeños.</li>
+            <li>
+              <strong>Resuelve e integra:</strong> soluciona cada parte y luego
+              júntalas.
+            </li>
+            <li>
+              <strong>Ejemplo:</strong> para los tres mayores de una lista:
+              ordenar y tomar los tres últimos.
+            </li>
+          </ul>
+          <h4>Paso 5: Planificar con pseudocódigo</h4>
+          <ul>
+            <li>
+              <strong>Escribe el plan:</strong> pasos en lenguaje natural.
+            </li>
+            <li>
+              <strong>Concéntrate en la lógica:</strong> sin preocuparte por
+              sintaxis.
+            </li>
+            <li>
+              <strong>Ejemplo (media):</strong> sumar todos, contar elementos,
+              dividir suma entre cantidad.
+            </li>
+          </ul>
+          <h4>Paso 6: Escribir a mano</h4>
+          <ul>
+            <li>
+              <strong>Memoria y comprensión:</strong> escribir a mano obliga a
+              procesar más profundo.
+            </li>
+            <li>
+              <strong>Practica:</strong> redacta pasos de algoritmos o
+              fragmentos combinados con pseudocódigo.
+            </li>
+          </ul>
+
+          <h3>Fase 3: Práctica y consolidación</h3>
+          <h4>Paso 7: Practicar constantemente</h4>
+          <ul>
+            <li>
+              <strong>Principio de práctica:</strong> como en el deporte, solo
+              jugando mejoras.
+            </li>
+            <li>
+              <strong>Genera hábito:</strong> toma apuntes y verifica que
+              entiendes lo que resuelves.
+            </li>
+          </ul>
+          <h4>Paso 8: Crear tu plan personalizado</h4>
+          <ul>
+            <li>
+              <strong>Tiempo diario:</strong> define bloques (ej. Pomodoro).
+            </li>
+            <li>
+              <strong>Divide temas:</strong> variables, condicionales, bucles,
+              etc.
+            </li>
+            <li><strong>Planifica descansos:</strong> evita burnout.</li>
+            <li>
+              <strong>Ten paciencia:</strong> lo que hoy cuesta, mañana encaja
+              con práctica.
+            </li>
+          </ul>
+          <div class="callout warning">
+            <span class="callout-title">Comprueba y ajusta</span>
+            NotebookLM puede ofrecer respuestas inexactas. Ajusta el plan a tus
+            ritmos y verifica lo que aprendes con práctica real.
+          </div>
+        </section>
+
+        <section id="errores-resolucion">
+          <h2>
+            Tutorial para la Gestión y Resolución Efectiva de Errores de
+            Programación
+          </h2>
+          <p>
+            Los errores son inevitables. Leerlos, categorizarlos y seguir un
+            proceso claro convierte la frustración en aprendizaje. Un error es
+            cualquier problema que impide que el programa se ejecute
+            correctamente.
+          </p>
+
+          <h3>I. Categorización de errores</h3>
+          <ul>
+            <li>
+              <strong>Sintaxis:</strong> el código está mal escrito o
+              estructurado; el lenguaje no reconoce la instrucción.
+            </li>
+            <li>
+              <strong>Lógica:</strong> decisiones o flujos no son los esperados;
+              son difíciles y exigen análisis claro.
+            </li>
+            <li>
+              <strong>Tiempo de ejecución:</strong> ocurren mientras corre el
+              programa (dividir entre cero, acceder a archivo inexistente,
+              etc.).
+            </li>
+            <li>
+              <strong>Otros tipos:</strong> descritos en el mensaje (índice,
+              tipo, permisos, etc.).
+            </li>
+          </ul>
+
+          <h3>II. La importancia del mensaje de error</h3>
+          <p>El mensaje aporta pistas valiosas: léelo completo.</p>
+          <ul>
+            <li>
+              <strong>Ubicación:</strong> archivo y número de línea donde se
+              produjo.
+            </li>
+            <li>
+              <strong>Ejecución:</strong> qué se estaba ejecutando cuando falló.
+            </li>
+            <li>
+              <strong>Tipo de error:</strong> a menudo indica la categoría
+              (sintaxis, índice, tipo...).
+            </li>
+          </ul>
+          <div class="callout info">
+            <span class="callout-title">Tip</span>
+            Aunque sean largos, lee los mensajes con calma. Ahí está casi
+            siempre la pista inicial para resolver.
+          </div>
+
+          <h3>III. Pasos prácticos para la resolución</h3>
+          <ol>
+            <li>
+              <strong>Lee el mensaje:</strong> sin miedo, identifica tipo y
+              ubicación.
+            </li>
+            <li>
+              <strong>Localiza el código:</strong> ve a la línea/archivo
+              mencionados.
+            </li>
+            <li>
+              <strong>Identifica y busca patrones:</strong> ¿es sintaxis, tipo,
+              índice? Muchos errores se repiten.
+            </li>
+            <li>
+              <strong>Investiga:</strong> si no lo ves claro, busca el mensaje
+              en Google, Stack Overflow, GitHub o pide ayuda (ChatGPT, foros).
+            </li>
+            <li>
+              <strong>Corrige y prueba de nuevo:</strong> re-ejecuta. Si surge
+              otro error, repite el ciclo desde el paso 1.
+            </li>
+          </ol>
+
+          <h3>IV. Fortalecer la lógica a través del error</h3>
+          <ul>
+            <li>
+              <strong>Crecimiento profesional:</strong> quien más ha fallado y
+              practicado, más sólido se vuelve.
+            </li>
+            <li>
+              <strong>Fortalecimiento de la lógica:</strong> los errores obligan
+              a estructurar mejor los problemas y soluciones.
+            </li>
+            <li>
+              <strong>Independencia y dominio del lenguaje:</strong> enfrentarte
+              primero al problema refuerza tu confianza y te hace profundizar en
+              el lenguaje.
+            </li>
+          </ul>
+          <div class="callout warning">
+            <span class="callout-title">Comprueba y valida</span>
+            NotebookLM puede ofrecer respuestas inexactas. Contrasta las
+            soluciones y verifica en tu entorno antes de darlas por buenas.
+          </div>
+        </section>
+
+        <section id="especializacion">
+          <h2>Tutorial Paso a Paso: Ruta de Especialización en Programación</h2>
+          <p>
+            La especialización es clave para diferenciarte y ser eficiente. En
+            vez de abarcar todo, céntrate en un área y profundiza.
+          </p>
+
+          <h3>Paso 1: Definir el foco y la dirección</h3>
+          <ul>
+            <li>
+              <strong>Alinea tus objetivos:</strong> decide qué tipo de
+              proyectos quieres crear (frontend, backend, móvil, IA, etc.).
+            </li>
+            <li>
+              <strong>Evalúa el mercado:</strong> si buscas empleabilidad, mira
+              dónde hay más demanda real (ej. web/móvil vs. IA según contexto).
+            </li>
+            <li>
+              <strong>Invierte bien el tiempo:</strong> evita dispersarte; sé
+              experto en un área en lugar de “aprendiz de mucho y maestro de
+              nada”.
+            </li>
+          </ul>
+
+          <h3>Paso 2: Dominar la base y la lógica</h3>
+          <ul>
+            <li>
+              <strong>Selecciona un lenguaje clave:</strong> elige el principal
+              para tu especialidad.
+            </li>
+            <li>
+              <strong>Aprende fundamentos a fondo:</strong> consolida lógica,
+              estructuras de datos y cimientos.
+            </li>
+            <li>
+              <strong>Recuerda el propósito:</strong> el lenguaje es un medio;
+              lo valioso es crear el software de tu área.
+            </li>
+          </ul>
+
+          <h3>Paso 3: Complementar con herramientas relevantes</h3>
+          <ul>
+            <li>
+              <strong>Usa herramientas comunes:</strong> editores, control de
+              versiones y utilidades típicas para ser eficaz.
+            </li>
+            <li>
+              <strong>Selecciona frameworks específicos:</strong> elige
+              librerías que potencien tu foco (uno o dos, no todos).
+            </li>
+            <li>
+              <strong>Evita la sobrecarga:</strong> no saltes de tecnología en
+              tecnología; profundiza en pocas.
+            </li>
+          </ul>
+
+          <h3>Paso 4: Aplicación práctica y proyectos</h3>
+          <ul>
+            <li>
+              <strong>Proyectos reales:</strong> construye entregables de tu
+              área (webs, APIs, apps móviles, etc.).
+            </li>
+            <li>
+              <strong>Habilidad sólida:</strong> la práctica en proyectos
+              aplicados consolida tu valor en el mercado.
+            </li>
+          </ul>
+
+          <h3>Paso 5: Retroalimentación y mejora continua</h3>
+          <ul>
+            <li>
+              <strong>Busca feedback:</strong> comparte proyectos y recibe
+              críticas constructivas.
+            </li>
+            <li>
+              <strong>Interactúa con la comunidad:</strong> foros, meetups,
+              repos abiertos.
+            </li>
+            <li>
+              <strong>Acepta críticas:</strong> úsalas para refinar tu
+              especialidad.
+            </li>
+            <li>
+              <strong>Conviértete en referente:</strong> una comprensión
+              profunda te vuelve valioso para roles específicos.
+            </li>
+          </ul>
+
+          <div class="callout warning">
+            <span class="callout-title">Nota</span>
+            Las fuentes resaltan la importancia de mencionar herramientas
+            comunes para aprender eficazmente, pero no listan cuáles. Ajusta tu
+            stack según tu área y mercado. NotebookLM puede ofrecer respuestas
+            inexactas; verifica la información.
+          </div>
+        </section>
+
+        <section id="matematicas">
+          <h2>
+            Tutorial: Entendiendo la Relación entre las Matemáticas y la
+            Programación
+          </h2>
+          <p>
+            No necesitas matemáticas avanzadas para empezar a programar. Lo
+            esencial es el pensamiento lógico y la resolución sistemática de
+            problemas; las mates ayudan a estructurar, pero no son barrera
+            inicial.
+          </p>
+
+          <h3>1. El mito y la verdad</h3>
+          <p>
+            El mito: se requieren matemáticas avanzadas para programar. La
+            realidad: para iniciarte y ser competente no son imprescindibles; lo
+            clave es la lógica.
+          </p>
+
+          <h3>2. Conceptos matemáticos esenciales para principiantes</h3>
+          <ul>
+            <li>
+              <strong>Aritmética básica:</strong> sumas, restas,
+              multiplicaciones, divisiones son operadores comunes en cualquier
+              lenguaje.
+            </li>
+            <li>
+              <strong>Operadores de comparación:</strong> igual, mayor/menor,
+              distinto y módulo para condiciones y control de flujo.
+            </li>
+            <li>
+              <strong>Geometría básica:</strong> coordenadas y distancias útiles
+              en gráficos, animaciones o videojuegos sencillos.
+            </li>
+          </ul>
+
+          <h3>3. El pensamiento lógico como habilidad clave</h3>
+          <p>
+            Programar implica dividir problemas grandes en partes pequeñas y
+            resolverlas en orden. Identificar patrones y estructurar pasos es
+            más importante que fórmulas complejas.
+          </p>
+
+          <h3>4. Campos donde las matemáticas avanzadas NO son necesarias</h3>
+          <ul>
+            <li>Desarrollo web (frontend/backend).</li>
+            <li>Aplicaciones de negocio o productividad.</li>
+            <li>Apps móviles o de escritorio.</li>
+            <li>Automatización de tareas.</li>
+          </ul>
+
+          <h3>5. Áreas que SÍ requieren matemáticas avanzadas</h3>
+          <ul>
+            <li>
+              <strong>IA y Machine Learning:</strong> álgebra lineal, matrices,
+              probabilidad.
+            </li>
+            <li>
+              <strong>Ciencia de datos:</strong> estadística para trabajar con
+              datos.
+            </li>
+            <li>
+              <strong>Videojuegos/animaciones:</strong> física, trigonometría y
+              geometría para movimientos, ángulos y colisiones.
+            </li>
+          </ul>
+          <div class="callout info">
+            <span class="callout-title">Equipos mixtos</span>
+            En áreas avanzadas es común trabajar con matemáticos y
+            especialistas; no todo recae en un solo rol.
+          </div>
+
+          <h3>6. Estrategias para mejorar el pensamiento lógico</h3>
+          <ol>
+            <li>
+              <strong>Rompecabezas de lógica:</strong> entrenan la forma de
+              pensar.
+            </li>
+            <li>
+              <strong>Descomponer problemas:</strong> divide en pasos pequeños y
+              manejables.
+            </li>
+            <li>
+              <strong>Pseudocódigo:</strong> escribe los pasos sin preocuparte
+              por la sintaxis.
+            </li>
+            <li>
+              <strong>Ejercicios básicos de programación:</strong> calcula
+              medias, ordena elementos, busca valores; sube la dificultad
+              gradualmente.
+            </li>
+          </ol>
+
+          <div class="callout success">
+            <span class="callout-title">Recomendación</span>
+            Comienza con programación básica y fortalece tu lógica. La
+            especialización en campos con matemáticas avanzadas puede venir
+            después; nunca es tarde para aprender esos conceptos.
+          </div>
+        </section>
+
+        <section id="especializacion-camino">
+          <h2>Tutorial: El Camino Hacia la Especialización en Programación</h2>
+          <p>
+            Especializarte te permite profundidad y valor en el mercado. La
+            clave es foco y práctica aplicada, no abarcarlo todo.
+          </p>
+
+          <h3>Paso 1: Mentalidad de especialista (profundidad vs. amplitud)</h3>
+          <ul>
+            <li>Evita querer aprenderlo todo a la vez.</li>
+            <li>
+              El que mucho abarca, poco aprieta: saltar entre tecnologías impide
+              dominio real.
+            </li>
+            <li>Prioriza una habilidad concreta para aportar más valor.</li>
+          </ul>
+
+          <h3>Paso 2: Elegir área e intereses</h3>
+          <ul>
+            <li>
+              Define qué proyectos te atraen (frontend, backend, análisis,
+              etc.).
+            </li>
+            <li>
+              Enfoca en la parte visual, servidor o análisis según tus
+              objetivos.
+            </li>
+          </ul>
+
+          <h3>Paso 3: Evaluar demanda laboral</h3>
+          <ul>
+            <li>
+              Investiga el mercado real (ej. más puestos en web/mobile que en IA
+              en ciertos contextos).
+            </li>
+            <li>
+              Busca tu primera oportunidad siendo realista; luego podrás
+              pivotar.
+            </li>
+          </ul>
+
+          <h3>Paso 4: Dominar fundamentos y lógica</h3>
+          <ul>
+            <li>
+              Aprende a fondo los fundamentos y la lógica de programación.
+            </li>
+            <li>
+              Domina un lenguaje relacionado con tu foco (web, backend, etc.).
+            </li>
+            <li>
+              Recuerda: el lenguaje es un medio; te valoran por construir el
+              software de tu área.
+            </li>
+          </ul>
+
+          <h3>Paso 5: Complementar con herramientas</h3>
+          <ul>
+            <li>Tras la base, añade frameworks/bibliotecas relevantes.</li>
+            <li>Elige uno o pocos populares y útiles; no necesitas todos.</li>
+          </ul>
+
+          <h3>Paso 6: Proyectos específicos</h3>
+          <ul>
+            <li>
+              Construye proyectos de tu especialidad (webs, APIs, apps, según
+              foco).
+            </li>
+            <li>
+              Afianza habilidades y aplica buenas prácticas y accesibilidad.
+            </li>
+          </ul>
+
+          <h3>Paso 7: Feedback y mejora continua</h3>
+          <ul>
+            <li>Busca críticas constructivas y comparte en comunidad.</li>
+            <li>Ser referente en un área te destaca para roles específicos.</li>
+          </ul>
+
+          <div class="callout info">
+            <span class="callout-title">Metáfora</span>
+            Piensa tu carrera como un rascacielos: excava una base sólida
+            (fundamentos y especialidad) y luego añade pisos (frameworks y
+            detalles) sabiendo que la estructura soporta el crecimiento.
+          </div>
+          <div class="callout warning">
+            <span class="callout-title">Nota</span>
+            NotebookLM puede ofrecer respuestas inexactas. Contrasta con el
+            mercado y ajusta tu ruta.
+          </div>
+        </section>
+
+        <section id="booleana">
+          <h2>
+            Tutorial: Introducción y Aplicación del Álgebra de Boole (Lógica
+            Buleana)
+          </h2>
+          <p>
+            La lógica booleana es un pilar para evaluar condiciones en el
+            código. Se basa en dos valores: verdadero (<code>true</code>) y
+            falso (<code>false</code>). Controla decisiones, flujo y
+            comparaciones en cualquier lenguaje.
+          </p>
+
+          <h3>1. Operadores lógicos fundamentales</h3>
+          <ul>
+            <li>
+              <strong>AND (Y / &&):</strong> verdadero solo si ambas expresiones
+              son verdaderas; si alguna es falsa, el resultado es falso.
+            </li>
+            <li>
+              <strong>OR (O / ||):</strong> verdadero si al menos una expresión
+              es verdadera; solo es falso si todas son falsas.
+            </li>
+            <li>
+              <strong>NOT (NO / !):</strong> invierte el valor booleano:
+              <code>true</code> a <code>false</code> y viceversa.
+            </li>
+          </ul>
+
+          <h3>2. Tablas de verdad</h3>
+          <p>
+            Las tablas de verdad muestran todas las combinaciones posibles de
+            valores y sus resultados.
+          </p>
+          <pre><code>A     B     A && B     A || B     !A
+true  true   true      true      false
+true  false  false     true      false
+false true   false     true      true
+false false  false     false     true</code></pre>
+          <ul>
+            <li><strong>AND:</strong> solo true si A y B son true.</li>
+            <li><strong>OR:</strong> false únicamente si A y B son false.</li>
+            <li><strong>NOT:</strong> invierte el valor.</li>
+          </ul>
+
+          <h3>3. Ejemplos prácticos de aplicación</h3>
+          <pre><code class="language-javascript">// AND: mayor de edad Y con licencia
+if (edad &gt;= 18 && tieneLicencia) { /* acceso */ }
+
+// OR: usuario registrado O con código de invitación
+if (estaRegistrado || tieneCodigoInvitacion) { /* acceso */ }
+
+// NOT: negar condición de menor de edad
+if (!esMenorDeEdad) { /* acceso permitido */ }</code></pre>
+          <ul>
+            <li>
+              <strong>AND:</strong> acceso solo si ambas condiciones se cumplen.
+            </li>
+            <li>
+              <strong>OR:</strong> basta con una de las dos para conceder
+              acceso.
+            </li>
+            <li>
+              <strong>NOT:</strong> permite acceso si no es menor de edad.
+            </li>
+          </ul>
+
+          <h3>Ejercicios con variaciones</h3>
+          <ul>
+            <li>
+              <strong>Acceso con doble validación:</strong> “usuario activo” y
+              “email verificado” Y (rol admin O rol editor). Escríbelo con
+              paréntesis y prueba combinaciones.
+            </li>
+            <li>
+              <strong>Descuentos escalonados:</strong> aplica 20% si (cliente
+              premium Y compra &gt; 100) O (tiene cupón válido). Añade NOT para
+              bloquear si cupón expiró.
+            </li>
+            <li>
+              <strong>Juego de turnos:</strong> permitir acción solo si (tiene
+              energía &gt; 0) Y (no está aturdido) Y (turno del jugador O turno
+              extra).
+            </li>
+            <li>
+              <strong>Control de acceso físico:</strong> abre puerta si (badge
+              válido Y hora entre 8-18) O (emergencia activa). Usa NOT para
+              denegar si “badge revocado”.
+            </li>
+            <li>
+              <strong>Filtro de datos:</strong> incluye ítems si (estado ===
+              "activo" || estado === "pendiente") && !eliminado. Cambia valores
+              y verifica resultados esperados.
+            </li>
+          </ul>
+
+          <div class="toggle-section">
+            <details>
+              <summary>Mostrar soluciones sugeridas</summary>
+              <div class="toggle-content">
+                <pre><code class="language-javascript">// 1) Acceso con doble validación
+const acceso = usuarioActivo && emailVerificado && (rol === "admin" || rol === "editor");
+
+// 2) Descuentos escalonados (bloqueando cupón expirado)
+const tieneDescuento = (clientePremium && compra &gt; 100) || (cuponValido && !cuponExpirado);
+
+// 3) Juego de turnos
+const puedeActuar = energia &gt; 0 && !estaAturdido && (turnoJugador || turnoExtra);
+
+// 4) Control de acceso físico
+const abrePuerta = ((badgeValido && hora &gt;= 8 && hora &lt;= 18) || emergenciaActiva) && !badgeRevocado;
+
+// 5) Filtro de datos
+const incluir = (estado === "activo" || estado === "pendiente") && !eliminado;</code></pre>
+              </div>
+            </details>
+          </div>
+
+          <h3>4. Consejos para usar lógica booleana</h3>
+          <ul>
+            <li>
+              <strong>Usa paréntesis:</strong> agrupa condiciones para definir
+              el orden y mejorar legibilidad.
+            </li>
+            <li>
+              <strong>Pseudocódigo:</strong> escribe las condiciones en lenguaje
+              natural antes de codificarlas.
+            </li>
+            <li>
+              <strong>Practica y memoriza:</strong> ten presentes las tablas de
+              verdad; practica operadores en tu lenguaje.
+            </li>
+          </ul>
+          <div class="callout warning">
+            <span class="callout-title">Comprueba</span>
+            NotebookLM puede ofrecer respuestas inexactas. Verifica y prueba en
+            tu entorno para confirmar el comportamiento.
+          </div>
+        </section>
+
+        <section id="pensamiento-logico">
+          <h2>
+            Tutorial: Desarrollo y Aplicación del Pensamiento Lógico en
+            Programación
+          </h2>
+          <p>
+            El pensamiento lógico es la base para resolver problemas: analizar,
+            dividir en pasos manejables y seguir un proceso claro hasta la
+            solución.
+          </p>
+
+          <h3>Paso 1: Dominar “divide y vencerás”</h3>
+          <ul>
+            <li>
+              <strong>Analiza el problema:</strong> qué se necesita lograr.
+            </li>
+            <li>
+              <strong>Descompón en partes pequeñas:</strong> cada paso debe ser
+              programable por separado.
+            </li>
+            <li>
+              <strong>Ejemplo (media de una lista):</strong> recorrer, sumar,
+              contar, dividir suma/total.
+            </li>
+          </ul>
+
+          <h3>Paso 2: Establecer la lógica secuencial</h3>
+          <ul>
+            <li>
+              <strong>Orden importa:</strong> define qué hace la máquina, en qué
+              orden y por qué.
+            </li>
+            <li>
+              <strong>Piensa en recetas:</strong> variar el orden cambia el
+              resultado.
+            </li>
+          </ul>
+
+          <h3>Paso 3: Aplicar estructuras de control</h3>
+          <ul>
+            <li>
+              <strong>Condicionales (if/else):</strong> decisiones basadas en
+              condiciones (ej. encender calefacción si temperatura baja).
+            </li>
+            <li>
+              <strong>Bucles (for/while):</strong> repetir acciones (ej.
+              recorrer notas para calcular media).
+            </li>
+          </ul>
+
+          <h3>Paso 4: Prever escenarios y errores</h3>
+          <ul>
+            <li><strong>Escenario ideal:</strong> cómo debería funcionar.</li>
+            <li>
+              <strong>Casos problemáticos:</strong> piensa en colaterales (ej.
+              dividir por cero en calculadora).
+            </li>
+          </ul>
+
+          <h3>Paso 5: Identificar y crear patrones</h3>
+          <ul>
+            <li>
+              <strong>Reconoce estructuras reutilizables:</strong> busca
+              patrones adaptables.
+            </li>
+            <li>
+              <strong>Código reusable:</strong> evita repetir errores; ej.
+              patrón para contar apariciones en un texto.
+            </li>
+          </ul>
+
+          <h3>Paso 6: Práctica constante</h3>
+          <ul>
+            <li>
+              <strong>Hábito diario:</strong> la lógica mejora con práctica
+              continua.
+            </li>
+            <li>
+              <strong>Ejercicios simples:</strong> par/impar (resto cero) para
+              descomponer y secuenciar.
+            </li>
+          </ul>
+
+          <div class="callout warning">
+            <span class="callout-title">Recuerda</span>
+            Programar es dar instrucciones claras y ordenadas. NotebookLM puede
+            ofrecer respuestas inexactas; verifica, practica y ajusta.
+          </div>
+        </section>
+
+        <section id="ide">
+          <h2>
+            Tutorial: Cómo Elegir y Dominar tu Entorno de Desarrollo Integrado
+            (IDE)
+          </h2>
+          <p>
+            Un IDE es más que un editor: integra escritura, depuración y
+            herramientas que aceleran tu trabajo. Elegir y dominar el adecuado
+            evita errores y te hace más eficiente.
+          </p>
+
+          <h3>Fase 1: Fundamentos y selección del IDE</h3>
+          <h4>Paso 1: Entender la importancia del IDE</h4>
+          <ul>
+            <li>Combina edición, prueba y depuración en el día a día.</li>
+            <li>Ejemplos: VS Code, IntelliJ, Android Studio, Xcode, Vim.</li>
+          </ul>
+          <h4>Paso 2: Elegir el IDE adecuado</h4>
+          <ul>
+            <li>
+              <strong>Versátil:</strong> VS Code sirve para casi todo con
+              extensiones.
+            </li>
+            <li>
+              <strong>Especializado:</strong> Android Studio para Android, Xcode
+              para iOS, IntelliJ para JVM, etc.
+            </li>
+            <li>
+              <strong>Prueba y decide:</strong> la mayoría son gratis o con
+              trial; experimenta y elige.
+            </li>
+          </ul>
+
+          <h3>Fase 2: Impulsores de productividad</h3>
+          <h4>Paso 3: Dominar atajos de teclado</h4>
+          <ul>
+            <li>
+              Guardar, buscar, comentar/descomentar, formatear, saltar entre
+              archivos.
+            </li>
+            <li>Personaliza atajos para tu flujo.</li>
+          </ul>
+          <div class="callout info">
+            <span class="callout-title"
+              >Atajos clave en VS Code (mac / win-linux)</span
+            >
+            <ul>
+              <li>Guardar: ⌘S / Ctrl+S</li>
+              <li>Búsqueda global: ⌘⇧F / Ctrl+Shift+F</li>
+              <li>Ir a archivo: ⌘P / Ctrl+P</li>
+              <li>Ir a símbolo en archivo: ⌘⇧O / Ctrl+Shift+O</li>
+              <li>Paleta de comandos: ⌘⇧P / Ctrl+Shift+P</li>
+              <li>Comentar/descomentar: ⌘/ / Ctrl+/</li>
+              <li>Formatear documento: ⌥⇧F / Alt+Shift+F</li>
+              <li>Mover línea arriba/abajo: ⌥↑↓ / Alt+Up/Down</li>
+              <li>Duplicar línea: ⇧⌥↓ / Shift+Alt+Down</li>
+              <li>Múltiples cursores: ⌥+clic / Alt+click</li>
+            </ul>
+          </div>
+          <h4>Paso 4: Autocompletado</h4>
+          <ul>
+            <li>
+              Sugerencias de funciones, variables y sintaxis reducen errores y
+              te ahorran memoria.
+            </li>
+            <li>
+              Fuerza sugerencias con Ctrl+Espacio / Cmd+Espacio según IDE.
+            </li>
+          </ul>
+
+          <h3>Fase 3: La herramienta esencial (debug)</h3>
+          <h4>Paso 5: Ejecutar y pausar con breakpoints</h4>
+          <ul>
+            <li>Modo debug: corre el programa paso a paso.</li>
+            <li>
+              Breakpoints: pausa en líneas clave para inspeccionar el estado.
+            </li>
+          </ul>
+          <h4>Paso 6: Navegar e inspeccionar variables</h4>
+          <ul>
+            <li><strong>Step Over:</strong> avanza línea a línea.</li>
+            <li>
+              <strong>Step Into:</strong> entra en funciones para ver su
+              interior.
+            </li>
+            <li>
+              <strong>Inspección:</strong> revisa valores en tiempo real y
+              confirma hipótesis.
+            </li>
+          </ul>
+          <div class="callout info">
+            <span class="callout-title">Recomendación</span>
+            Familiarízate pronto con el debugger: resuelve errores más rápido y
+            entiendes el flujo real del programa.
+          </div>
+
+          <h3>Fase 4: Flujo avanzado e integración</h3>
+          <h4>Paso 7: Refactorizar de forma segura</h4>
+          <ul>
+            <li>
+              Renombra variables/funciones y mueve código con las herramientas
+              del IDE para evitar errores manuales.
+            </li>
+          </ul>
+          <h4>Paso 8: Otras funcionalidades y plugins</h4>
+          <ul>
+            <li>
+              Previsualizaciones según el stack, terminal integrada, extensiones
+              y plugins.
+            </li>
+            <li>Explora y adopta solo lo que aporte a tu flujo.</li>
+          </ul>
+
+          <h3>Paso 9: Ejercicio de integración</h3>
+          <ol>
+            <li>Explora menús y acciones del IDE.</li>
+            <li>Practica atajos básicos.</li>
+            <li>Ejecuta en debug, coloca breakpoints y usa Step Over/Into.</li>
+            <li>Inspecciona variables y estados.</li>
+            <li>Usa el autocompletado y revisa sugerencias.</li>
+          </ol>
+          <div class="callout warning">
+            <span class="callout-title">Comprueba</span>
+            NotebookLM puede ofrecer respuestas inexactas. Verifica las
+            recomendaciones según tu stack e IDE.
+          </div>
+        </section>
+
+        <section id="busqueda-ia">
+          <h2>
+            Tutorial: Estrategia de Búsqueda y Uso Crítico de IA para
+            Programadores
+          </h2>
+          <p>
+            Google y herramientas como ChatGPT/Copilot son apoyos potentes, pero
+            el objetivo es aprender y no depender al 100%. Usa estas guías para
+            buscar mejor y mantener tu criterio técnico.
+          </p>
+
+          <h3>Fase 1: Dominar Google</h3>
+          <h4>Paso 1: Términos específicos</h4>
+          <ul>
+            <li>
+              Busca con el error exacto de la terminal, no con frases genéricas.
+            </li>
+            <li>
+              Añade contexto: lenguaje, librería, estructura (for, if, etc.).
+            </li>
+          </ul>
+          <h4>Paso 2: Operadores de búsqueda</h4>
+          <ul>
+            <li>Frase exacta con comillas <code>"..."</code>.</li>
+            <li><code>site:</code> para restringir a un dominio.</li>
+            <li>Insight: el senior suele ser quien mejor busca en Google.</li>
+          </ul>
+
+          <h3>Fase 2: Aprovechar IA generativa</h3>
+          <h4>Paso 3: ChatGPT para conceptos y estructura</h4>
+          <ul>
+            <li>
+              Explicaciones de conceptos, ideas de estructura, pseudocódigo.
+            </li>
+            <li>Resolver dudas puntuales o analizar código.</li>
+          </ul>
+          <h4>Paso 4: Copilot (o similar) para productividad</h4>
+          <ul>
+            <li>Sugerencias en línea para acelerar escritura.</li>
+            <li>Completa funciones y genera esqueletos de código.</li>
+          </ul>
+
+          <h3>Fase 3: Uso crítico</h3>
+          <h4>Paso 5: Verificar y contrastar</h4>
+          <ul>
+            <li>
+              Prueba las soluciones; no te quedes con la primera respuesta.
+            </li>
+            <li>Entiende por qué funciona antes de adoptarla.</li>
+          </ul>
+          <h4>Paso 6: Estudiar el código generado</h4>
+          <ul>
+            <li>Analiza línea por línea lo que sugiere la IA.</li>
+            <li>No copies sin entender; dirige tú las decisiones.</li>
+            <li>La IA te acelera, pero tú debes estar al volante.</li>
+          </ul>
+
+          <h3>Fase 4: Práctica integrada</h3>
+          <h4>Paso 7: Ejercicio de contraste</h4>
+          <ol>
+            <li>Elige un tema (ej. listas en Python, funciones en JS).</li>
+            <li>Investiga en Google y guarda fuentes confiables.</li>
+            <li>Pregunta a la IA dudas específicas.</li>
+            <li>Contrasta lo que dice la IA con tus fuentes.</li>
+            <li>
+              Escribe código con lo aprendido; si hay errores, vuelve a
+              preguntar y corrige.
+            </li>
+          </ol>
+          <div class="callout warning">
+            <span class="callout-title">Balance</span>
+            Usa IA y buscadores como apoyo, no como sustituto. El aprendizaje
+            viene de probar, entender y decidir por ti mismo. NotebookLM puede
+            ofrecer respuestas inexactas; verifica siempre.
+          </div>
+        </section>
+
+        <section id="git">
+          <h2>
+            Tutorial: Integrando Git y GitHub en el Desarrollo de Software
+            (Control de Versiones)
+          </h2>
+          <p>
+            El control de versiones es esencial para mantener historial,
+            colaborar y revertir errores. Git gestiona los cambios; GitHub los
+            aloja y facilita la colaboración.
+          </p>
+
+          <h3>Fase 1: Fundamentos</h3>
+          <h4>Paso 1: Importancia del control de versiones</h4>
+          <ul>
+            <li>
+              <strong>Revisar y retroceder:</strong> accede a versiones
+              anteriores.
+            </li>
+            <li>
+              <strong>Historial completo:</strong> cada commit es una “foto” del
+              proyecto.
+            </li>
+            <li>
+              <strong>Reversión de errores:</strong> restaura sin perder el
+              trabajo reciente.
+            </li>
+            <li>
+              <strong>Organización:</strong> permite trabajar en features sin
+              romper la rama principal.
+            </li>
+          </ul>
+          <h4>Paso 2: Conceptos clave de Git</h4>
+          <ul>
+            <li><strong>Repositorio:</strong> el proyecto con su historial.</li>
+            <li><strong>Commit:</strong> foto del estado con mensaje.</li>
+            <li>
+              <strong>Ramas:</strong> líneas paralelas para features o fixes.
+            </li>
+            <li><strong>Merge:</strong> fusiona cambios de ramas.</li>
+          </ul>
+
+          <h3>Fase 2: Flujo básico con Git</h3>
+          <h4>Paso 3: Inicializar el repositorio</h4>
+          <p>Activa el control de versiones en tu carpeta de proyecto.</p>
+          <h4>Paso 4: Crear commits</h4>
+          <ol>
+            <li>Trabaja en una parte concreta.</li>
+            <li>
+              Haz un commit con mensaje claro para registrar qué y por qué.
+            </li>
+          </ol>
+          <h4>Paso 5: Ramas y fusiones</h4>
+          <ol>
+            <li>Crea una rama para cada feature o fix.</li>
+            <li>Al terminar, haz merge a la rama principal.</li>
+          </ol>
+
+          <div class="callout info">
+            <span class="callout-title">Checklist de comandos esenciales</span>
+            <pre><code class="language-bash">git init                 # inicializar repo
+git status               # ver estado y cambios
+git add .                # preparar archivos para commit
+git commit -m "mensaje"  # crear commit con descripción
+git branch feature-x     # crear rama
+git checkout feature-x   # cambiar a la rama
+git checkout -b feature  # crear y cambiar
+git merge feature-x      # fusionar en la rama actual
+git push origin main     # enviar a remoto
+git pull origin main     # traer cambios remotos</code></pre>
+          </div>
+
+          <h3>Fase 3: Colaboración y proyección con GitHub</h3>
+          <h4>Paso 6: Alojamiento en la nube</h4>
+          <ul>
+            <li>GitHub aloja repos en la nube para colaboración segura.</li>
+            <li>Facilita trabajar en paralelo y recibir revisiones.</li>
+          </ul>
+          <h4>Paso 7: Portafolio profesional</h4>
+          <ol>
+            <li>Crea cuenta y sube tus proyectos.</li>
+            <li>Construye portafolio público con tu historial real.</li>
+            <li>Muestra habilidades y progreso a potenciales empleadores.</li>
+          </ol>
+          <div class="callout warning">
+            <span class="callout-title">Verifica</span>
+            NotebookLM puede ofrecer respuestas inexactas. Contrasta siempre y
+            practica los comandos en tu entorno.
+          </div>
+        </section>
+
+        <footer
+          style="
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-light);
+          "
+        >
+          <p>&copy; 2024 Tutorial de Práctica en Programación</p>
+        </footer>
+      </main>
+    </div>
+
+    <!-- UTILITIES SCRIPT -->
+    <script>
+      // --- CONFIGURATION ---
+      const PROJECT_CONFIG = {
+        title: "Tutorial<span>Práctica</span>", // Usa <span> para resaltar
+        version: "Guía enfocada",
+        lastUpdated: new Date().toLocaleDateString("es-ES"),
+      };
+
+      // Apply Config
+      document.getElementById("project-title").innerHTML = PROJECT_CONFIG.title;
+      document.getElementById("project-version").innerText =
+        PROJECT_CONFIG.version;
+      document.getElementById("last-updated").innerText =
+        "Actualizado: " + PROJECT_CONFIG.lastUpdated;
+
+      // --- SYNTAX HIGHLIGHTER (No External Deps) ---
+      function highlightCode() {
+        const rules = [
+          { regex: /(\/\/.*|#.*)/g, class: "token-comment" }, // Comments (JS or Shell)
+          { regex: /(['"`].*?['"`])/g, class: "token-string" },
+          {
+            regex:
+              /\b(const|let|var|function|return|if|else|import|from|async|await|def|class)\b/g,
+            class: "token-keyword",
+          },
+          {
+            regex: /\b(console|window|document|print|require)\b/g,
+            class: "token-function",
+          },
+          { regex: /\b\d+\b/g, class: "token-number" },
+        ];
+
+        document.querySelectorAll("pre code").forEach((block) => {
+          let html = block.innerHTML;
+          const comments = [];
+          const strings = [];
+
+          // 1. Hide Strings & Comments to prevent false positive matching
+          html = html.replace(/(\/\/.*|#.*)/g, (m) => {
+            comments.push(m);
+            return `__COM_${comments.length - 1}__`;
+          });
+          html = html.replace(/(["'`].*?["'`])/g, (m) => {
+            strings.push(m);
+            return `__STR_${strings.length - 1}__`;
+          });
+
+          // 2. Highlight Keywords
+          rules.forEach((rule) => {
+            if (
+              rule.class !== "token-comment" &&
+              rule.class !== "token-string"
+            ) {
+              html = html.replace(
+                rule.regex,
+                `<span class="${rule.class}">$1</span>`
+              );
+            }
+          });
+
+          // 3. Restore
+          html = html.replace(
+            /__STR_(\d+)__/g,
+            (m, i) => `<span class="token-string">${strings[i]}</span>`
+          );
+          html = html.replace(
+            /__COM_(\d+)__/g,
+            (m, i) => `<span class="token-comment">${comments[i]}</span>`
+          );
+
+          block.innerHTML = html;
+        });
+      }
+
+      // --- TABS LOGIC ---
+      function openTab(evt, tabId) {
+        const container = evt.currentTarget.closest(".tabs");
+        const contents = container.querySelectorAll(".tab-content");
+        const buttons = container.querySelectorAll(".tab-btn");
+
+        contents.forEach((c) => {
+          c.style.display = "none";
+          c.classList.remove("active");
+        });
+        buttons.forEach((b) => b.classList.remove("active"));
+
+        const target = document.getElementById(tabId);
+        if (target) {
+          target.style.display = "block";
+          setTimeout(() => target.classList.add("active"), 10);
+        }
+        evt.currentTarget.classList.add("active");
+      }
+
+      // --- UI INTERACTION ---
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+      }
+
+      // --- SCROLL SPY & PROGRESS ---
+      window.onscroll = function () {
+        let winScroll =
+          document.body.scrollTop || document.documentElement.scrollTop;
+        let height =
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight;
+        document.getElementById("progressBar").style.width =
+          (winScroll / height) * 100 + "%";
+
+        const sections = document.querySelectorAll("section");
+        const navLi = document.querySelectorAll(".nav-links li a");
+        let current = "";
+
+        sections.forEach((section) => {
+          const sectionTop = section.offsetTop;
+          if (pageYOffset >= sectionTop - 150)
+            current = section.getAttribute("id");
+        });
+
+        navLi.forEach((li) => {
+          li.classList.remove("active");
+          if (li.getAttribute("href").includes(current))
+            li.classList.add("active");
+        });
+      };
+
+      // --- INIT ---
+      document.addEventListener("DOMContentLoaded", () => {
+        highlightCode();
+        // Add Copy Buttons
+        document.querySelectorAll("pre").forEach((pre) => {
+          const btn = document.createElement("button");
+          btn.className = "copy-btn";
+          btn.textContent = "Copy";
+          btn.onclick = () => {
+            navigator.clipboard.writeText(pre.querySelector("code").innerText);
+            btn.textContent = "Copied!";
+            setTimeout(() => (btn.textContent = "Copy"), 2000);
+          };
+          pre.appendChild(btn);
+        });
+      });
+    </script>
+  </body>
+</html>
