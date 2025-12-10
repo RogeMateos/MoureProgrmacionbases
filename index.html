@@ -117,6 +117,7 @@
         font-size: 0.9rem;
         border-left: 3px solid transparent;
         transition: all 0.2s;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
       }
       .nav-links li a:hover,
       .nav-links li a.active {
@@ -143,8 +144,17 @@
         color: white;
         border: none;
         padding: 0.5rem;
-        border-radius: 4px;
+        border-radius: 8px;
         cursor: pointer;
+        min-width: 44px;
+        min-height: 44px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .mobile-toggle:active {
+        transform: scale(0.95);
+        background: var(--primary-dark);
       }
 
       /* Progress Bar */
@@ -352,27 +362,149 @@
         gap: 2rem;
       }
 
+      /* Mobile Overlay */
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 99;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+      }
+
+      /* Tablet Responsive */
+      @media (max-width: 1024px) {
+        .main-content {
+          padding: 2rem;
+        }
+        h1 {
+          font-size: 2rem;
+        }
+        h2 {
+          font-size: 1.5rem;
+        }
+      }
+
       /* Mobile Responsive */
       @media (max-width: 768px) {
         .sidebar {
           position: fixed;
+          width: 280px;
           transform: translateX(-100%);
+          box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
         }
         .sidebar.open {
           transform: translateX(0);
         }
         .main-content {
           padding: 1rem;
-          margin-top: 3rem;
+          margin-top: 3.5rem;
+          width: 100%;
         }
         .reading-progress-container {
           left: 0;
         }
         .mobile-toggle {
           display: block;
+          font-size: 1.2rem;
+          padding: 0.75rem 1rem;
         }
         .grid-2 {
           grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        /* Typography responsive */
+        h1 {
+          font-size: clamp(1.5rem, 5vw, 2.5rem);
+          line-height: 1.2;
+        }
+        h2 {
+          font-size: clamp(1.3rem, 4vw, 1.8rem);
+          margin-top: 2rem;
+        }
+        h3 {
+          font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+        }
+
+        /* Code blocks responsive */
+        pre {
+          padding: 1rem;
+          font-size: 0.8rem;
+          margin: 1rem -1rem;
+          border-radius: 0;
+        }
+        .copy-btn {
+          opacity: 1;
+          font-size: 0.7rem;
+        }
+
+        /* Callouts responsive */
+        .callout {
+          padding: 0.75rem 1rem;
+          margin: 1rem -1rem;
+          border-radius: 0;
+        }
+
+        /* Tabs responsive */
+        .tab-headers {
+          flex-wrap: wrap;
+        }
+        .tab-btn {
+          padding: 0.5rem 1rem;
+          font-size: 0.9rem;
+        }
+        .tab-content {
+          padding: 1rem;
+        }
+
+        /* Breadcrumbs responsive */
+        .breadcrumbs {
+          font-size: 0.8rem;
+        }
+      }
+
+      /* Small mobile devices */
+      @media (max-width: 480px) {
+        .sidebar {
+          width: 85%;
+          max-width: 320px;
+        }
+        .main-content {
+          padding: 0.75rem;
+        }
+        h1 {
+          font-size: 1.5rem;
+        }
+        h2 {
+          font-size: 1.25rem;
+        }
+        h3 {
+          font-size: 1.1rem;
+        }
+        pre {
+          font-size: 0.75rem;
+          padding: 0.75rem;
+        }
+        .mobile-toggle {
+          top: 0.5rem;
+          right: 0.5rem;
+          padding: 0.5rem 0.75rem;
+        }
+        .brand h1 {
+          font-size: 1rem;
+        }
+        .nav-links a {
+          padding: 0.6rem 1rem;
+          font-size: 0.9rem;
         }
       }
 
@@ -390,6 +522,7 @@
   </head>
   <body>
     <button class="mobile-toggle" onclick="toggleSidebar()">☰ Menu</button>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     <div class="reading-progress-container">
       <div class="reading-progress-bar" id="progressBar"></div>
     </div>
@@ -438,9 +571,12 @@
             padding-bottom: 1rem;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
           "
         >
-          <div class="breadcrumbs">Tutorial / Práctica estructurada</div>
+          <div class="breadcrumbs" style="font-size: 0.9rem;">Tutorial / Práctica estructurada</div>
           <div style="font-size: 0.8rem; color: #64748b" id="last-updated">
             Actualizado: Hoy
           </div>
@@ -2365,8 +2501,36 @@ git pull origin main     # traer cambios remotos</code></pre>
 
       // --- UI INTERACTION ---
       function toggleSidebar() {
-        document.getElementById("sidebar").classList.toggle("open");
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+        sidebar.classList.toggle("open");
+        overlay.classList.toggle("active");
+
+        // Prevent body scroll when sidebar is open on mobile
+        if (sidebar.classList.contains("open")) {
+          document.body.style.overflow = "hidden";
+        } else {
+          document.body.style.overflow = "";
+        }
       }
+
+      // Close sidebar when clicking on nav links (mobile)
+      document.addEventListener("DOMContentLoaded", () => {
+        const navLinks = document.querySelectorAll(".nav-links a");
+        navLinks.forEach(link => {
+          link.addEventListener("click", () => {
+            if (window.innerWidth <= 768) {
+              const sidebar = document.getElementById("sidebar");
+              const overlay = document.getElementById("sidebarOverlay");
+              if (sidebar.classList.contains("open")) {
+                sidebar.classList.remove("open");
+                overlay.classList.remove("active");
+                document.body.style.overflow = "";
+              }
+            }
+          });
+        });
+      });
 
       // --- SCROLL SPY & PROGRESS ---
       window.onscroll = function () {
